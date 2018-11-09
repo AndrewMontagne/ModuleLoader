@@ -12,44 +12,67 @@ class ModuleLoaderTest extends TestCase
 {
     private $originalCwd = null;
 
-    public function testNoAutoloadPresent()
+    public function testNoModulesPresent()
     {
         chdir($this->originalCwd . '/src/test/fixtures/testNoModules');
-        $modules = ManifestGenerator::generateManifest();
-
-        $this->assertEmpty($modules);
+        $categories = ManifestGenerator::generateManifest();
+        $this->assertEmpty($categories);
     }
 
     public function testDontScanForbiddenDirectories()
     {
         chdir($this->originalCwd . '/src/test/fixtures/testDontScanForbiddenDirectories');
-        $modules = ManifestGenerator::generateManifest();
-
-        $this->assertEmpty($modules);
+        $categories = ManifestGenerator::generateManifest();
+        $this->assertEmpty($categories);
     }
 
     public function testSimpleModule()
     {
         chdir($this->originalCwd . '/src/test/fixtures/testSimpleModule');
-        $modules = ManifestGenerator::generateManifest();
+        $categories = ManifestGenerator::generateManifest();
 
-        $this->assertNotEmpty($modules);
-        $this->assertEquals(1, $this->count($modules));
+        $this->assertCount(1, $categories);
 
-        $simpleModules = $modules["SimpleModule"];
-        $this->assertNotEmpty($simpleModules);
-        $this->assertEquals(1, $this->count($simpleModules));
+        $categoryName = 'SimpleModule';
+        $module = $this->assertManifestContainsACategoryWithOneModuleAndReturn($categories, $categoryName);
+        $category = $this->assertModuleContainsOneCategoryAndReturn($module, $categoryName);
 
-        $module = $simpleModules[0];
-        $this->assertInstanceOf('ModuleLoader\ModuleDefinition', $module);
+        $this->assertEmpty($category->getVariables());
+    }
 
+    public function testComplexModule()
+    {
+        chdir($this->originalCwd . '/src/test/fixtures/testComplexModule');
+        $categories = ManifestGenerator::generateManifest();
+
+        $this->assertCount(1, $categories);
+
+        $categoryName = 'ComplexModule';
+        $module = $this->assertManifestContainsACategoryWithOneModuleAndReturn($categories, $categoryName);
+        $category = $this->assertModuleContainsOneCategoryAndReturn($module, $categoryName);
+
+        $variables = $category->getVariables();
+        $this->assertNotEmpty($variables);
+    }
+
+    private function assertManifestContainsACategoryWithOneModuleAndReturn(array $categories, string $categoryName): ModuleDefinition {
+        $this->assertNotEmpty($categories);
+        $this->assertArrayHasKey($categoryName, $categories);
+        $category = $categories[$categoryName];
+        $this->assertNotEmpty($category);
+        $this->assertEquals(1, $this->count($category));
+        return $category[0];
+    }
+
+    private function assertModuleContainsOneCategoryAndReturn(ModuleDefinition $module, string $categoryName): ModuleCategory {
         $moduleCategories = $module->getCategories();
         $this->assertNotEmpty($moduleCategories);
         $this->assertEquals(1, $this->count($moduleCategories));
 
-        $moduleCategory = $moduleCategories[0];
-        $this->assertEquals("SimpleModule", $moduleCategory->getName());
-        $this->assertEmpty($moduleCategory->getVariables());
+        $category = $moduleCategories[0];
+        $this->assertEquals($categoryName, $category->getName());
+
+        return $category;
     }
 
     protected function setUp()
