@@ -38,8 +38,18 @@ class ModuleLoader
      */
     static public function loadModules(
         string $filename = ManifestGenerator::MANIFEST_FILENAME
-    ) {
+    ): void {
         self::$modules = require($filename);
+    }
+
+    /**
+     * Generates and loads the modules manifest at runtime. Generally only
+     * useful for development or debugging purposes.
+     *
+     * @var $path string Path to search from. Should be the root of the project.
+     */
+    static public function dynamicallyLoadModules(string $path = '.'): void {
+        self::$modules = ManifestGenerator::generateManifest($path);
     }
 
     /**
