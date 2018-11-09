@@ -34,10 +34,38 @@ class ModuleLoaderTest extends TestCase
         $this->assertCount(1, $categories);
 
         $categoryName = 'SimpleModule';
-        $module = $this->assertManifestContainsACategoryWithOneModuleAndReturn($categories, $categoryName);
-        $category = $this->assertModuleContainsOneCategoryAndReturn($module, $categoryName);
+        $module = $this->assertManifestContainsACategoryWithOneModuleAndReturn($categories,
+            $categoryName);
+        $category = $this->assertModuleContainsOneCategoryAndReturn($module,
+            $categoryName);
 
         $this->assertEmpty($category->getVariables());
+    }
+
+    private function assertManifestContainsACategoryWithOneModuleAndReturn(
+        array $categories,
+        string $categoryName
+    ): ModuleDefinition {
+        $this->assertNotEmpty($categories);
+        $this->assertArrayHasKey($categoryName, $categories);
+        $category = $categories[$categoryName];
+        $this->assertNotEmpty($category);
+        $this->assertEquals(1, $this->count($category));
+        return $category[0];
+    }
+
+    private function assertModuleContainsOneCategoryAndReturn(
+        ModuleDefinition $module,
+        string $categoryName
+    ): ModuleCategory {
+        $moduleCategories = $module->getCategories();
+        $this->assertNotEmpty($moduleCategories);
+        $this->assertEquals(1, $this->count($moduleCategories));
+
+        $category = $moduleCategories[0];
+        $this->assertEquals($categoryName, $category->getName());
+
+        return $category;
     }
 
     public function testComplexModule()
@@ -48,31 +76,13 @@ class ModuleLoaderTest extends TestCase
         $this->assertCount(1, $categories);
 
         $categoryName = 'ComplexModule';
-        $module = $this->assertManifestContainsACategoryWithOneModuleAndReturn($categories, $categoryName);
-        $category = $this->assertModuleContainsOneCategoryAndReturn($module, $categoryName);
+        $module = $this->assertManifestContainsACategoryWithOneModuleAndReturn($categories,
+            $categoryName);
+        $category = $this->assertModuleContainsOneCategoryAndReturn($module,
+            $categoryName);
 
         $variables = $category->getVariables();
         $this->assertNotEmpty($variables);
-    }
-
-    private function assertManifestContainsACategoryWithOneModuleAndReturn(array $categories, string $categoryName): ModuleDefinition {
-        $this->assertNotEmpty($categories);
-        $this->assertArrayHasKey($categoryName, $categories);
-        $category = $categories[$categoryName];
-        $this->assertNotEmpty($category);
-        $this->assertEquals(1, $this->count($category));
-        return $category[0];
-    }
-
-    private function assertModuleContainsOneCategoryAndReturn(ModuleDefinition $module, string $categoryName): ModuleCategory {
-        $moduleCategories = $module->getCategories();
-        $this->assertNotEmpty($moduleCategories);
-        $this->assertEquals(1, $this->count($moduleCategories));
-
-        $category = $moduleCategories[0];
-        $this->assertEquals($categoryName, $category->getName());
-
-        return $category;
     }
 
     protected function setUp()

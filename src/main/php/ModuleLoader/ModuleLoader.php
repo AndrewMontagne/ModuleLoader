@@ -36,7 +36,9 @@ class ModuleLoader
      *
      * @param string $filename
      */
-    static public function loadModules(string $filename = ManifestGenerator::MANIFEST_FILENAME) {
+    static public function loadModules(
+        string $filename = ManifestGenerator::MANIFEST_FILENAME
+    ) {
         self::$modules = require($filename);
     }
 
@@ -48,7 +50,7 @@ class ModuleLoader
      */
     static public function getModulesForCategory(string $category): array
     {
-        if(array_key_exists($category, self::$modules)) {
+        if (array_key_exists($category, self::$modules)) {
             return self::$modules[$category];
         } else {
             return [];
