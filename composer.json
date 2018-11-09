@@ -1,0 +1,31 @@
+{
+    "name": "andrewmontagne/moduleloader",
+    "description": "A library for module discovery within a project.",
+    "type": "library",
+    "version": "0.0.1",
+    "require-dev": {
+        "phpunit/phpunit": "^7.4"
+    },
+    "autoload": {
+        "psr-4": {
+            "ModuleLoader\\": "src/main/php/ModuleLoader"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "ModuleLoader\\": "src/test/php/ModuleLoader"
+        }
+    },
+    "license": "AGPL-3.0-or-later",
+    "authors": [
+        {
+            "name": "Andrew O'Rourke",
+            "email": "andrew@montagne.uk"
+        }
+    ],
+    "minimum-stability": "stable",
+    "require": {
+        "php": ">=7.2",
+        "ext-json": "*"
+    }
+}
