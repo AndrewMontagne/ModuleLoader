@@ -66,4 +66,28 @@ class ModuleLoader
             return [];
         }
     }
+
+    /**
+     * Searches the manifest for a single module in the specified category.
+     * Throws an exception if there is less than or more than one available.
+     *
+     * @param string $category
+     * @return ModuleDefinition
+     * @throws ModuleLoadingException
+     */
+    static public function getModuleForCategory(string $category): ModuleDefinition
+    {
+        $modules = self::getModulesForCategory($category);
+
+        switch (count($modules)) {
+            case 0:
+                throw new ModuleLoadingException("Could not find any modules for category '$category'!");
+                break;
+            case 1:
+                return $modules[0];
+                break;
+            default:
+                throw new ModuleLoadingException("More than one module available for category '$category'!");
+        }
+    }
 }

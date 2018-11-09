@@ -98,8 +98,25 @@ class ModuleDefinition
         return $this;
     }
 
+    /**
+     * Returns the fully qualified class name
+     * @return string
+     */
     public function getFullyQualifiedClassName(): string
     {
         return "$this->namespace\\$this->className";
+    }
+
+    /**
+     * Creates and returns an instance of the module
+     *
+     * @param mixed ...$args
+     * @return object
+     * @throws \ReflectionException
+     */
+    public function create(...$args): object
+    {
+        $class = new \ReflectionClass($this->getFullyQualifiedClassName());
+        return $class->newInstanceArgs($args);
     }
 }
