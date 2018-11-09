@@ -75,7 +75,7 @@ class ManifestGenerator
     private static function findModules($filePathname)
     {
         $matches = [];
-        preg_match('/namespace (\w+);[^\/]+\/\*\*[^\/]*@module ([\w\d $()=]+)\n[^{]*\/\s+class\s+(\w+)/m',
+        preg_match('/namespace (\w+);[^\/]+\/\*\*[^\/]*@module ([\w\d $(),=]+)\n[^{]*\/\s+class\s+(\w+)/m',
             file_get_contents($filePathname),
             $matches);
         if (count($matches) > 0) {
@@ -92,7 +92,7 @@ class ManifestGenerator
 
     public static function parseCategories($categoryString): array
     {
-        $entries = explode(' ', trim($categoryString));
+        $entries = preg_split('/\s+(?=[^)]*([(]|$))/', trim($categoryString));
         $categories = [];
         foreach ($entries as $entry) {
             $matches = [];
