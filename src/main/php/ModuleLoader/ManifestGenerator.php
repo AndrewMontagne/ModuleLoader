@@ -18,7 +18,12 @@ class ManifestGenerator
     const MANIFEST_FILENAME = 'vendor/modules.php';
     const DISALLOWED_FOLDERS = ['.', '..', 'test', 'tests', 'logs'];
 
-    static function dumpManifestToFile($filename = self::MANIFEST_FILENAME
+    /**
+     * This method generates the manifest and dumps it into a file
+     *
+     * @param string $filename Optional. Specifies the explicit filename.
+     */
+    public static function dumpManifestToFile($filename = self::MANIFEST_FILENAME
     ): void {
         $categories = self::generateManifest();
 
@@ -37,10 +42,13 @@ class ManifestGenerator
     /**
      * This method is meant to be invoked by Composer whenever the packages are
      * updated. It discovers and generates a manifest of all the modules.
+     *
+     * @var $path string Path to search from. Should be the root of the project.
+     * @return array The modules manifest.
      */
-    static function generateManifest(): array
+    public static function generateManifest(string $path = '.'): array
     {
-        $modules = self::recursiveSearch('.');
+        $modules = self::recursiveSearch($path);
         $categories = [];
 
         foreach ($modules as $module) {
@@ -90,7 +98,7 @@ class ManifestGenerator
         }
     }
 
-    public static function parseCategories($categoryString): array
+    private static function parseCategories($categoryString): array
     {
         $entries = preg_split('/\s+(?=[^)]*([(]|$))/', trim($categoryString));
         $categories = [];

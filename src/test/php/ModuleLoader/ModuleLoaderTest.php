@@ -10,26 +10,21 @@ use PHPUnit\Framework\TestCase;
 
 class ModuleLoaderTest extends TestCase
 {
-    private $originalCwd = null;
-
     public function testNoModulesPresent()
     {
-        chdir($this->originalCwd . '/src/test/fixtures/testNoModules');
-        $categories = ManifestGenerator::generateManifest();
+        $categories = ManifestGenerator::generateManifest(getcwd() . '/src/test/fixtures/testNoModules');
         $this->assertEmpty($categories);
     }
 
     public function testDontScanForbiddenDirectories()
     {
-        chdir($this->originalCwd . '/src/test/fixtures/testDontScanForbiddenDirectories');
-        $categories = ManifestGenerator::generateManifest();
+        $categories = ManifestGenerator::generateManifest(getcwd() . '/src/test/fixtures/testDontScanForbiddenDirectories');
         $this->assertEmpty($categories);
     }
 
     public function testSimpleModule()
     {
-        chdir($this->originalCwd . '/src/test/fixtures/testSimpleModule');
-        $categories = ManifestGenerator::generateManifest();
+        $categories = ManifestGenerator::generateManifest(getcwd() . '/src/test/fixtures/testSimpleModule');
 
         $this->assertCount(1, $categories);
 
@@ -41,6 +36,23 @@ class ModuleLoaderTest extends TestCase
 
         $this->assertEmpty($category->getVariables());
     }
+
+    public function testComplexModule()
+    {
+        $categories = ManifestGenerator::generateManifest(getcwd() . '/src/test/fixtures/testComplexModule');
+
+        $this->assertCount(1, $categories);
+
+        $categoryName = 'ComplexModule';
+        $module = $this->assertManifestContainsACategoryWithOneModuleAndReturn($categories,
+            $categoryName);
+        $category = $this->assertModuleContainsOneCategoryAndReturn($module,
+            $categoryName);
+
+        $variables = $category->getVariables();
+        $this->assertNotEmpty($variables);
+    }
+
 
     private function assertManifestContainsACategoryWithOneModuleAndReturn(
         array $categories,
@@ -66,33 +78,5 @@ class ModuleLoaderTest extends TestCase
         $this->assertEquals($categoryName, $category->getName());
 
         return $category;
-    }
-
-    public function testComplexModule()
-    {
-        chdir($this->originalCwd . '/src/test/fixtures/testComplexModule');
-        $categories = ManifestGenerator::generateManifest();
-
-        $this->assertCount(1, $categories);
-
-        $categoryName = 'ComplexModule';
-        $module = $this->assertManifestContainsACategoryWithOneModuleAndReturn($categories,
-            $categoryName);
-        $category = $this->assertModuleContainsOneCategoryAndReturn($module,
-            $categoryName);
-
-        $variables = $category->getVariables();
-        $this->assertNotEmpty($variables);
-    }
-
-    protected function setUp()
-    {
-        $this->originalCwd = getcwd();
-    }
-
-    protected function tearDown()
-    {
-        @unlink(ManifestGenerator::MANIFEST_FILENAME);
-        chdir($this->originalCwd);
     }
 }
