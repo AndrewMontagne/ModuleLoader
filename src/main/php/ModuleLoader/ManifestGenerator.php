@@ -83,7 +83,7 @@ class ManifestGenerator
     private static function findModules($filePathname)
     {
         $matches = [];
-        preg_match('/namespace (\w+);[^\/]+\/\*\*[^\/]*@module ([\w\d $(),=]+)\n[^{]*\/\s+class\s+(\w+)/m',
+        preg_match('/namespace ([\w\\\]+);[^\/]+\/\*\*[^\/]*@module ([\w\d $(),=]+)\n[^{]*\/\s+class\s+(\w+)/m',
             file_get_contents($filePathname),
             $matches);
         if (count($matches) > 0) {
