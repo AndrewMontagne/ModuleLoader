@@ -53,6 +53,15 @@ class ModuleLoaderTest extends TestCase
         $this->assertNotEmpty($variables);
     }
 
+    public function testNestedNamespace()
+    {
+        $categories = ManifestGenerator::generateManifest(getcwd() . '/src/test/fixtures/testNestedNamespace');
+        $categoryName = 'NestedModule';
+        $module = $this->assertManifestContainsACategoryWithOneModuleAndReturn($categories,
+            $categoryName);
+        $this->assertModuleContainsOneCategoryAndReturn($module,
+            $categoryName);
+    }
 
     private function assertManifestContainsACategoryWithOneModuleAndReturn(
         array $categories,
