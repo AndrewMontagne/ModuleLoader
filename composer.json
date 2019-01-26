@@ -6,16 +6,20 @@
         "src/main/bin/generate-module-manifest"
     ],
     "require-dev": {
-        "phpunit/phpunit": "^7.4"
+        "phpunit/phpunit": "^7.4",
+        "friendsofphp/php-cs-fixer": "^2.13"
     },
     "autoload": {
         "psr-4": {
-            "ModuleLoader\\": "src/main/php/ModuleLoader"
-        }
+            "MuPHP\\": "src/main/php/MuPHP"
+        },
+        "files": [
+            "src/main/php/Inject.php"
+        ]
     },
     "autoload-dev": {
         "psr-4": {
-            "ModuleLoader\\": "src/test/php/ModuleLoader"
+            "MuPHP\\": "src/test/php/MuPHP"
         }
     },
     "license": "AGPL-3.0-or-later",

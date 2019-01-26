@@ -14,5 +14,4 @@ namespace TestNamespace;
  */
 class TestClass
 {
-
 }

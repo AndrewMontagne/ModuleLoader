@@ -4,11 +4,11 @@ declare(strict_types=1);
  * Copyright 2018 Andrew O'Rourke
  */
 
-namespace ModuleLoader;
+namespace MuPHP\Modules;
 
 use PHPUnit\Framework\TestCase;
 
-class ModuleLoaderTest extends TestCase
+class ManifestGeneratorTest extends TestCase
 {
     public function testNoModulesPresent()
     {
@@ -29,10 +29,14 @@ class ModuleLoaderTest extends TestCase
         $this->assertCount(1, $categories);
 
         $categoryName = 'SimpleModule';
-        $module = $this->assertManifestContainsACategoryWithOneModuleAndReturn($categories,
-            $categoryName);
-        $category = $this->assertModuleContainsOneCategoryAndReturn($module,
-            $categoryName);
+        $module = $this->assertManifestContainsACategoryWithOneModuleAndReturn(
+            $categories,
+            $categoryName
+        );
+        $category = $this->assertModuleContainsOneCategoryAndReturn(
+            $module,
+            $categoryName
+        );
 
         $this->assertEmpty($category->getVariables());
     }
@@ -44,10 +48,14 @@ class ModuleLoaderTest extends TestCase
         $this->assertCount(1, $categories);
 
         $categoryName = 'ComplexModule';
-        $module = $this->assertManifestContainsACategoryWithOneModuleAndReturn($categories,
-            $categoryName);
-        $category = $this->assertModuleContainsOneCategoryAndReturn($module,
-            $categoryName);
+        $module = $this->assertManifestContainsACategoryWithOneModuleAndReturn(
+            $categories,
+            $categoryName
+        );
+        $category = $this->assertModuleContainsOneCategoryAndReturn(
+            $module,
+            $categoryName
+        );
 
         $variables = $category->getVariables();
         $this->assertNotEmpty($variables);
@@ -57,10 +65,35 @@ class ModuleLoaderTest extends TestCase
     {
         $categories = ManifestGenerator::generateManifest(getcwd() . '/src/test/fixtures/testNestedNamespace');
         $categoryName = 'NestedModule';
-        $module = $this->assertManifestContainsACategoryWithOneModuleAndReturn($categories,
-            $categoryName);
-        $this->assertModuleContainsOneCategoryAndReturn($module,
-            $categoryName);
+        $module = $this->assertManifestContainsACategoryWithOneModuleAndReturn(
+            $categories,
+            $categoryName
+        );
+        $this->assertModuleContainsOneCategoryAndReturn(
+            $module,
+            $categoryName
+        );
+    }
+
+    public function testVariableModules()
+    {
+        $categories = ManifestGenerator::generateManifest(getcwd() . '/src/test/fixtures/testVariabledModule');
+
+        $this->assertCount(1, $categories);
+        $modules = $categories['VariableModule'];
+        $this->assertCount(3, $modules);
+
+        $class1Vars = $modules['TestNamespace\\TestClass']->getCategory('VariableModule')->getVariables();
+        $class2Vars = $modules['TestNamespace\\TestClassTwo']->getCategory('VariableModule')->getVariables();
+        $class3Vars = $modules['TestNamespace\\TestClassThree']->getCategory('VariableModule')->getVariables();
+
+        $this->assertCount(1, $class1Vars);
+        $this->assertCount(0, $class2Vars);
+        $this->assertCount(2, $class3Vars);
+
+        $this->assertArrayHasKey('Test', $class1Vars);
+        $this->assertArrayHasKey('Test', $class3Vars);
+        $this->assertArrayHasKey('Test2', $class3Vars);
     }
 
     private function assertManifestContainsACategoryWithOneModuleAndReturn(
@@ -72,7 +105,7 @@ class ModuleLoaderTest extends TestCase
         $category = $categories[$categoryName];
         $this->assertNotEmpty($category);
         $this->assertEquals(1, $this->count($category));
-        return $category[0];
+        return array_pop($category);
     }
 
     private function assertModuleContainsOneCategoryAndReturn(
@@ -83,7 +116,7 @@ class ModuleLoaderTest extends TestCase
         $this->assertNotEmpty($moduleCategories);
         $this->assertEquals(1, $this->count($moduleCategories));
 
-        $category = $moduleCategories[0];
+        $category = array_pop($moduleCategories);
         $this->assertEquals($categoryName, $category->getName());
 
         return $category;
