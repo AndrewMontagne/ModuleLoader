@@ -30,8 +30,8 @@ index.php
 ```php
 <?php
 include 'vendor/autoload.php';
-use Modules\Modules;
+use Modules\ModuleLoader;
 
-Modules::dynamicallyLoadModules();
-$module = Modules::getModuleForCategory('Module')->create();
+setupInjection(ModuleLoader::dynamicallyLoadModules());
+$module = injectInstance('Module')->create();
 ```
