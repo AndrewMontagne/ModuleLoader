@@ -5,11 +5,11 @@ declare(strict_types=1);
  * Copyright 2018 Andrew O'Rourke
  */
 
-namespace ModuleLoader;
+namespace MuPHP\Modules;
 
 /**
  * Class ModuleDefinition
- * @package ModuleLoader
+ * @package Modules
  */
 class ModuleDefinition
 {
@@ -42,6 +42,11 @@ class ModuleDefinition
         $this->namespace = $namespace;
         $this->categories = $categories;
         $this->className = $className;
+    }
+
+    public function __toString()
+    {
+        return $this->getFullyQualifiedClassName();
     }
 
     /**
@@ -78,6 +83,22 @@ class ModuleDefinition
     {
         $this->categories = $categories;
         return $this;
+    }
+
+    /**
+     * Gets a ModuleCategory with the specified $name, if it exists.
+     *
+     * @param string $name
+     * @return ModuleCategory
+     */
+    public function getCategory(string $name): ModuleCategory
+    {
+        foreach ($this->categories as $category) {
+            if ($category->getName() == $name) {
+                return $category;
+            }
+        }
+        return null;
     }
 
     /**

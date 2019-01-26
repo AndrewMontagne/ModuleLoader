@@ -1,4 +1,4 @@
-# ModuleLoader
+# Modules
 
 This is a library for PHP to enable a form of dependency injection.
 
@@ -30,8 +30,8 @@ index.php
 ```php
 <?php
 include 'vendor/autoload.php';
-use ModuleLoader\ModuleLoader;
+use Modules\Modules;
 
-ModuleLoader::dynamicallyLoadModules();
-$module = ModuleLoader::getModuleForCategory('Module')->create();
+Modules::dynamicallyLoadModules();
+$module = Modules::getModuleForCategory('Module')->create();
 ```

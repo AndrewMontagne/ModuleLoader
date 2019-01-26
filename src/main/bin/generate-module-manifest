@@ -2,4 +2,4 @@
 <?php
 
 require_once 'vendor/autoload.php';
-ModuleLoader\ManifestGenerator::dumpManifestToFile();
+Modules\ManifestGenerator::dumpManifestToFile();

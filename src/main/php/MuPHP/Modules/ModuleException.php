@@ -5,12 +5,11 @@ declare(strict_types=1);
  * Copyright 2018 Andrew O'Rourke
  */
 
-namespace ModuleLoader;
-
+namespace MuPHP\Modules;
 
 use Throwable;
 
-class ModuleLoadingException extends \Exception
+class ModuleException extends \Exception
 {
     public function __construct(
         string $message = "",

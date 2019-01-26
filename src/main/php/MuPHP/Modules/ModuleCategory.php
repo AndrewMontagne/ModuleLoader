@@ -5,11 +5,11 @@ declare(strict_types=1);
  * Copyright 2018 Andrew O'Rourke
  */
 
-namespace ModuleLoader;
+namespace MuPHP\Modules;
 
 /**
  * Class ModuleCategory
- * @package ModuleLoader
+ * @package Modules
  */
 class ModuleCategory
 {

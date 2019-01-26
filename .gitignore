@@ -3,3 +3,4 @@
 /.idea/
 *.config.php
 /logs/
+.php_cs.cache

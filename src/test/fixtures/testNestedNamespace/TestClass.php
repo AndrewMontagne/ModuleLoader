@@ -14,5 +14,4 @@ namespace Nested\TestNamespace;
  */
 class TestClass
 {
-
 }
