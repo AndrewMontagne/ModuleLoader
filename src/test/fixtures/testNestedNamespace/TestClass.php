@@ -10,7 +10,7 @@ namespace Nested\TestNamespace;
 /**
  * Class TestClass
  * @package Nested\TestNamespace
- * @module NestedModule
+ * @@NestedModule
  */
 class TestClass
 {

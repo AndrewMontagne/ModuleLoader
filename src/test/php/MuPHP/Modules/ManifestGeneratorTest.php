@@ -28,17 +28,17 @@ class ManifestGeneratorTest extends TestCase
 
         $this->assertCount(1, $categories);
 
-        $categoryName = 'SimpleModule';
-        $module = $this->assertManifestContainsACategoryWithOneModuleAndReturn(
+        $moduleName = 'SimpleModule';
+        $moduleContainer = $this->assertManifestContainsAClassWithOneModuleAndReturn(
             $categories,
-            $categoryName
+            $moduleName
         );
-        $category = $this->assertModuleContainsOneCategoryAndReturn(
-            $module,
-            $categoryName
+        $module = $this->assertModuleContainsOneClassAndReturn(
+            $moduleContainer,
+            $moduleName
         );
 
-        $this->assertEmpty($category->getVariables());
+        $this->assertEmpty($module->getVariables());
     }
 
     public function testComplexModule()
@@ -47,31 +47,31 @@ class ManifestGeneratorTest extends TestCase
 
         $this->assertCount(1, $categories);
 
-        $categoryName = 'ComplexModule';
-        $module = $this->assertManifestContainsACategoryWithOneModuleAndReturn(
+        $moduleName = 'ComplexModule';
+        $moduleContainer = $this->assertManifestContainsAClassWithOneModuleAndReturn(
             $categories,
-            $categoryName
+            $moduleName
         );
-        $category = $this->assertModuleContainsOneCategoryAndReturn(
-            $module,
-            $categoryName
+        $module = $this->assertModuleContainsOneClassAndReturn(
+            $moduleContainer,
+            $moduleName
         );
 
-        $variables = $category->getVariables();
+        $variables = $module->getVariables();
         $this->assertNotEmpty($variables);
     }
 
     public function testNestedNamespace()
     {
         $categories = ManifestGenerator::generateManifest(getcwd() . '/src/test/fixtures/testNestedNamespace');
-        $categoryName = 'NestedModule';
-        $module = $this->assertManifestContainsACategoryWithOneModuleAndReturn(
+        $moduleName = 'NestedModule';
+        $moduleContainer = $this->assertManifestContainsAClassWithOneModuleAndReturn(
             $categories,
-            $categoryName
+            $moduleName
         );
-        $this->assertModuleContainsOneCategoryAndReturn(
-            $module,
-            $categoryName
+        $this->assertModuleContainsOneClassAndReturn(
+            $moduleContainer,
+            $moduleName
         );
     }
 
@@ -83,9 +83,9 @@ class ManifestGeneratorTest extends TestCase
         $modules = $categories['VariableModule'];
         $this->assertCount(3, $modules);
 
-        $class1Vars = $modules['TestNamespace\\TestClass']->getCategory('VariableModule')->getVariables();
-        $class2Vars = $modules['TestNamespace\\TestClassTwo']->getCategory('VariableModule')->getVariables();
-        $class3Vars = $modules['TestNamespace\\TestClassThree']->getCategory('VariableModule')->getVariables();
+        $class1Vars = $modules['TestNamespace\\TestClass']->getModule('VariableModule')->getVariables();
+        $class2Vars = $modules['TestNamespace\\TestClassTwo']->getModule('VariableModule')->getVariables();
+        $class3Vars = $modules['TestNamespace\\TestClassThree']->getModule('VariableModule')->getVariables();
 
         $this->assertCount(1, $class1Vars);
         $this->assertCount(0, $class2Vars);
@@ -96,29 +96,38 @@ class ManifestGeneratorTest extends TestCase
         $this->assertArrayHasKey('Test2', $class3Vars);
     }
 
-    private function assertManifestContainsACategoryWithOneModuleAndReturn(
-        array $categories,
-        string $categoryName
-    ): ModuleDefinition {
-        $this->assertNotEmpty($categories);
-        $this->assertArrayHasKey($categoryName, $categories);
-        $category = $categories[$categoryName];
-        $this->assertNotEmpty($category);
-        $this->assertEquals(1, $this->count($category));
-        return array_pop($category);
+    public function testQuotedModules()
+    {
+        $categories = ManifestGenerator::generateManifest(getcwd() . '/src/test/fixtures/testQuotedModule');
+
+        $this->assertCount(1, $categories);
+        $modules = $categories['QuotedModule'];
+        $this->assertCount(1, $modules);
     }
 
-    private function assertModuleContainsOneCategoryAndReturn(
-        ModuleDefinition $module,
-        string $categoryName
-    ): ModuleCategory {
-        $moduleCategories = $module->getCategories();
+    private function assertManifestContainsAClassWithOneModuleAndReturn(
+        array $modules,
+        string $moduleName
+    ): ModuleContainer {
+        $this->assertNotEmpty($modules);
+        $this->assertArrayHasKey($moduleName, $modules);
+        $module = $modules[$moduleName];
+        $this->assertNotEmpty($module);
+        $this->assertEquals(1, $this->count($module));
+        return array_pop($module);
+    }
+
+    private function assertModuleContainsOneClassAndReturn(
+        ModuleContainer $module,
+        string $moduleName
+    ): Module {
+        $moduleCategories = $module->getModules();
         $this->assertNotEmpty($moduleCategories);
         $this->assertEquals(1, $this->count($moduleCategories));
 
-        $category = array_pop($moduleCategories);
-        $this->assertEquals($categoryName, $category->getName());
+        $module = array_pop($moduleCategories);
+        $this->assertEquals($moduleName, $module->getName());
 
-        return $category;
+        return $module;
     }
 }

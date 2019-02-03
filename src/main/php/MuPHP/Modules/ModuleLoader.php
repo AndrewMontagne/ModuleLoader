@@ -67,26 +67,27 @@ class ModuleLoader
     }
 
     /**
-     * Searches the manifest for modules in the specified category.
      *
-     * @var $category string The module category to search for
-     * @return ModuleDefinition[]
+     * Searches the manifest for modules in the specified $module.
+     *
+     * @var $category string The module to search for
+     * @return ModuleContainer[]
      */
-    public function getModulesForCategory(string $categoryName, array $variables = []): array
+    public function getModules(string $moduleName, array $variables = []): array
     {
-        if (array_key_exists($categoryName, $this->modules)) {
-            $modules = $this->modules[$categoryName];
+        if (array_key_exists($moduleName, $this->modules)) {
+            $moduleContainers = $this->modules[$moduleName];
             if (empty($variables)) {
-                return $modules;
+                return $moduleContainers;
             } else {
                 $matchingModules = [];
-                foreach ($modules as $module) {
-                    $category = $module->getCategory($categoryName);
-                    if (is_null($category)) {
+                foreach ($moduleContainers as $moduleContainer) {
+                    $module = $moduleContainer->getModule($moduleName);
+                    if (is_null($module)) {
                         continue;
                     }
-                    if (array_intersect($category->getVariables(), $variables) == $variables) {
-                        $matchingModules[] = $module;
+                    if (array_intersect($module->getVariables(), $variables) == $variables) {
+                        $matchingModules[] = $moduleContainer;
                     }
                 }
                 return $matchingModules;
@@ -97,26 +98,26 @@ class ModuleLoader
     }
 
     /**
-     * Searches the manifest for a single module in the specified category.
+     * Searches the manifest for a single module in the specified module.
      * Throws an exception if there is less than or more than one available.
      *
-     * @param string $category
-     * @return ModuleDefinition
+     * @param string $name
+     * @return ModuleContainer
      * @throws ModuleException
      */
-    public function getModuleForCategory(string $category): ModuleDefinition
+    public function getModule(string $name): ModuleContainer
     {
-        $modules = $this->getModulesForCategory($category);
+        $modules = $this->getModules($name);
 
         switch (count($modules)) {
             case 0:
-                throw new ModuleException("Could not find any modules for category '$category'!");
+                throw new ModuleException("Could not find any modules for module '$name'!");
                 break;
             case 1:
                 return array_pop($modules);
                 break;
             default:
-                throw new ModuleException("More than one module available for category '$category'!");
+                throw new ModuleException("More than one module available for module '$name'!");
         }
     }
 }

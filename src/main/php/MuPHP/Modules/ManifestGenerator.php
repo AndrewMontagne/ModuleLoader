@@ -50,16 +50,18 @@ class ManifestGenerator
      */
     public static function generateManifest(string $path = '.'): array
     {
-        $modules = self::recursiveSearch($path);
-        $categories = [];
+        $moduleContainers = self::recursiveSearch($path);
+        $modules = [];
 
-        foreach ($modules as $module) {
-            foreach ($module->getCategories() as $category) {
-                $categories[$category->getName()][$module->getFullyQualifiedClassName()] = $module;
+        foreach ($moduleContainers as $moduleContainer) {
+            foreach ($moduleContainer->getModules() as $module) {
+                $modules[$module->getName()]
+                [$moduleContainer->getFullyQualifiedClassName()] =
+                    $moduleContainer;
             }
         }
 
-        return $categories;
+        return $modules;
     }
 
     private static function recursiveSearch($folderName): array
@@ -73,7 +75,10 @@ class ManifestGenerator
                     $results[] = $result;
                 }
             } elseif ($file->isDir()) {
-                if (!in_array($file->getFilename(), self::DISALLOWED_FOLDERS)) {
+                if (!in_array(
+                    $file->getFilename(),
+                    self::DISALLOWED_FOLDERS
+                )) {
                     $nested = self::recursiveSearch($file->getPathname());
                     $results = array_merge($results, $nested);
                 }
@@ -82,52 +87,69 @@ class ManifestGenerator
         return $results;
     }
 
-    private static function findModules($filePathname)
+    private static function findModules(string $filePathname)
     {
         $matches = [];
-        preg_match(
-            '/namespace ([\w\\\]+);[^\/]+\/\*\*[^\/]*@module ([\w\d $(),=]+)\n[^{]*\/\s+class\s+(\w+)/m',
-            file_get_contents($filePathname),
-            $matches
+        $source = file_get_contents($filePathname);
+        preg_match_all(
+            '/@@([\w\d]+)( +[^\n]+)?(?=\n[^{]*\/\s+class\s+\w+\s+{)/',
+            $source,
+            $matches,
+            PREG_SET_ORDER
         );
+
         if (count($matches) > 0) {
-            $module = new ModuleDefinition(
-                $matches[1],
-                self::parseCategories($matches[2]),
-                $matches[3]
+            $classMatches = [];
+            preg_match(
+                '/namespace\s+(\S+)\s*;[^{]+class\s+(\S+)/',
+                $source,
+                $classMatches
             );
-            return $module;
+
+            if (count($classMatches) != 3) {
+                return null;
+            }
+
+            $namespace = $classMatches[1];
+            $className = $classMatches[2];
+
+            $modules = [];
+
+            foreach ($matches as $match) {
+                if (count($match) == 3) {
+                    $modules[] = self::parseModule($match[1], trim($match[2]));
+                } else {
+                    $modules[] = self::parseModule($match[1]);
+                }
+            }
+            return new ModuleContainer(
+                $namespace,
+                $modules,
+                $className
+            );
         } else {
             return null;
         }
     }
 
-    private static function parseCategories($categoryString): array
-    {
-        $entries = preg_split('/\s+(?=[^)]*([(]|$))/', trim($categoryString));
-        $categories = [];
-        foreach ($entries as $entry) {
-            $matches = [];
-            preg_match('/(\w+)\((.*)\)/', $entry, $matches);
-            if (count($matches) == 0) {
-                $categories[] = new ModuleCategory($entry);
-            } else {
-                $variables = explode(',', $matches[2]);
-                $parsedVariables = [];
-                foreach ($variables as $variable) {
-                    $components = explode('=', $variable);
-                    if (count($components) == 1) {
-                        $parsedVariables[] = trim($components[0]);
-                    } else {
-                        $parsedVariables[trim($components[0])] = trim($components[1]);
-                    }
-                }
-                $categories[] = new ModuleCategory(
-                    $matches[1],
-                    $parsedVariables
-                );
-            }
+    private static function parseModule(
+        string $moduleName,
+        string $parameters = null
+    ): Module {
+        if ($parameters == null) {
+            return new Module($moduleName);
         }
-        return $categories;
+        preg_match_all(
+            '/(\w[\w\d]+)\s*=\s*((?:\'[^\']+\')|(?:"[^"]+")|(?:\S+))/',
+            trim($parameters),
+            $entries,
+            PREG_SET_ORDER
+        );
+
+        $variables = [];
+        foreach ($entries as $entry) {
+            $variables[$entry[1]] = trim($entry[2], ' "\'');
+        }
+        return new Module($moduleName, $variables);
     }
 }

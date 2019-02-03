@@ -16,13 +16,13 @@ function setupInjection(ModuleLoader $moduleLoader)
 }
 
 /**
- * @param string $category
+ * @param string $module
  * @param array $variables
- * @return \MuPHP\Modules\ModuleDefinition
+ * @return \MuPHP\Modules\ModuleContainer
  * @throws \MuPHP\Modules\ModuleException
  */
-function injectInstance(string $category, array $variables = [])
+function injectInstance(string $module, array $variables = [])
 {
     global $muphp_modules_moduleloader_singleton;
-    return $muphp_modules_moduleloader_singleton->getModuleForCategory($category, $variables);
+    return $muphp_modules_moduleloader_singleton->getModule($module, $variables);
 }

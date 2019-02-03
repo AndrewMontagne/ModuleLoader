@@ -10,8 +10,8 @@ namespace TestNamespace;
 /**
  * Class TestClass
  * @package TestNamespace
- * @@VariableModule
+ * @@QuotedModule var1="Var 1" var2='Var 2' var3=Var_3
  */
-class TestClassTwo
+class TestClass
 {
 }
