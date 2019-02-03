@@ -8,10 +8,10 @@ declare(strict_types=1);
 namespace MuPHP\Modules;
 
 /**
- * Class ModuleDefinition
+ * Class ModuleContainer
  * @package Modules
  */
-class ModuleDefinition
+class ModuleContainer
 {
     /**
      * @var string The namespace of the module
@@ -19,9 +19,9 @@ class ModuleDefinition
     private $namespace;
 
     /**
-     * @var ModuleCategory[] The categories the module belongs to
+     * @var Module[] The modules this container has
      */
-    private $categories;
+    private $modules;
 
     /**
      * @var string The class name of the module
@@ -29,18 +29,18 @@ class ModuleDefinition
     private $className;
 
     /**
-     * ModuleDefinition constructor.
+     * ModuleContainer constructor.
      * @param string $namespace
-     * @param array $categories
+     * @param array $modules
      * @param string $className
      */
     public function __construct(
         string $namespace,
-        array $categories,
+        array $modules,
         string $className
     ) {
         $this->namespace = $namespace;
-        $this->categories = $categories;
+        $this->modules = $modules;
         $this->className = $className;
     }
 
@@ -59,43 +59,43 @@ class ModuleDefinition
 
     /**
      * @param string $namespace
-     * @return ModuleDefinition
+     * @return ModuleContainer
      */
-    public function setNamespace(string $namespace): ModuleDefinition
+    public function setNamespace(string $namespace): ModuleContainer
     {
         $this->namespace = $namespace;
         return $this;
     }
 
     /**
-     * @return ModuleCategory[]
+     * @return Module[]
      */
-    public function getCategories(): array
+    public function getModules(): array
     {
-        return $this->categories;
+        return $this->modules;
     }
 
     /**
-     * @param array $categories
-     * @return ModuleDefinition
+     * @param array $modules
+     * @return ModuleContainer
      */
-    public function setCategories(array $categories): ModuleDefinition
+    public function setModules(array $modules): ModuleContainer
     {
-        $this->categories = $categories;
+        $this->modules = $modules;
         return $this;
     }
 
     /**
-     * Gets a ModuleCategory with the specified $name, if it exists.
+     * Gets a Module with the specified $name, if it exists.
      *
      * @param string $name
-     * @return ModuleCategory
+     * @return Module
      */
-    public function getCategory(string $name): ModuleCategory
+    public function getModule(string $name): Module
     {
-        foreach ($this->categories as $category) {
-            if ($category->getName() == $name) {
-                return $category;
+        foreach ($this->modules as $module) {
+            if ($module->getName() == $name) {
+                return $module;
             }
         }
         return null;
@@ -111,9 +111,9 @@ class ModuleDefinition
 
     /**
      * @param string $className
-     * @return ModuleDefinition
+     * @return ModuleContainer
      */
-    public function setClassName(string $className): ModuleDefinition
+    public function setClassName(string $className): ModuleContainer
     {
         $this->className = $className;
         return $this;

@@ -10,7 +10,7 @@ namespace TestNamespace;
 /**
  * Class TestClass
  * @package TestNamespace
- * @module ComplexModule(var1=var1, var2=var2)
+ * @@ComplexModule var1=var1 var2=var2
  */
 class TestClass
 {

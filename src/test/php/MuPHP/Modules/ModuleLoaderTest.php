@@ -20,9 +20,9 @@ class ModuleLoaderTest extends TestCase
     public function testSimpleModuleFetch()
     {
         $moduleLoader = $this->getModuleLoader('testSimpleModule');
-        $result = $moduleLoader->getModuleForCategory('SimpleModule');
+        $result = $moduleLoader->getModule('SimpleModule');
 
-        $this->assertInstanceOf('MuPHP\\Modules\\ModuleDefinition', $result);
+        $this->assertInstanceOf('MuPHP\\Modules\\ModuleContainer', $result);
     }
 
     /**
@@ -31,38 +31,38 @@ class ModuleLoaderTest extends TestCase
     public function testSimpleModuleFetchFailure()
     {
         $moduleLoader = $this->getModuleLoader('testSimpleModule');
-        $result = $moduleLoader->getModuleForCategory('ComplexModule');
+        $result = $moduleLoader->getModule('ComplexModule');
 
-        $this->assertInstanceOf('MuPHP\\Modules\\ModuleDefinition', $result);
+        $this->assertInstanceOf('MuPHP\\Modules\\ModuleContainer', $result);
     }
 
     public function testMultiModuleFetch()
     {
         $moduleLoader = $this->getModuleLoader('testVariabledModule');
-        $results = $moduleLoader->getModulesForCategory('VariableModule');
+        $results = $moduleLoader->getModules('VariableModule');
 
         $this->assertCount(3, $results);
 
         foreach ($results as $result) {
-            $this->assertInstanceOf('MuPHP\\Modules\\ModuleDefinition', $result);
+            $this->assertInstanceOf('MuPHP\\Modules\\ModuleContainer', $result);
         }
     }
 
     public function testVariableFilteredFetch()
     {
         $moduleLoader = $this->getModuleLoader('testVariabledModule');
-        $results = $moduleLoader->getModulesForCategory('VariableModule', ['Test2' => 'True']);
+        $results = $moduleLoader->getModules('VariableModule', ['Test2' => 'True']);
 
         $this->assertCount(1, $results);
 
         $result = array_pop($results);
-        $this->assertInstanceOf('MuPHP\\Modules\\ModuleDefinition', $result);
+        $this->assertInstanceOf('MuPHP\\Modules\\ModuleContainer', $result);
     }
 
     public function testVariableFilteredFetchFailure()
     {
         $moduleLoader = $this->getModuleLoader('testVariabledModule');
-        $results = $moduleLoader->getModulesForCategory('VariableModule', ['Test2' => 'False']);
+        $results = $moduleLoader->getModules('VariableModule', ['Test2' => 'False']);
 
         $this->assertCount(0, $results);
     }

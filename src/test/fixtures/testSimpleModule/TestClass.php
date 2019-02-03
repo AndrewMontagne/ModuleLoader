@@ -10,7 +10,7 @@ namespace TestNamespace;
 /**
  * Class TestClass
  * @package TestNamespace
- * @module SimpleModule
+ * @@SimpleModule
  */
 class TestClass
 {

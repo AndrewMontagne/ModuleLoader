@@ -10,7 +10,7 @@ namespace TestNamespace;
 /**
  * Class TestClass
  * @package TestNamespace
- * @module VariableModule(Test=False, Test2=True)
+ * @@VariableModule Test=False Test2=True
  */
 class TestClassThree
 {

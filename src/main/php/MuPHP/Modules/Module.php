@@ -8,13 +8,13 @@ declare(strict_types=1);
 namespace MuPHP\Modules;
 
 /**
- * Class ModuleCategory
+ * Class Module
  * @package Modules
  */
-class ModuleCategory
+class Module
 {
     /**
-     * @var string The name of the category
+     * @var string The name of the module
      */
     private $name;
 
@@ -24,7 +24,7 @@ class ModuleCategory
     private $variables;
 
     /**
-     * ModuleCategory constructor.
+     * Module constructor.
      * @param string $name
      * @param string[] $variables
      */
@@ -44,9 +44,9 @@ class ModuleCategory
 
     /**
      * @param string $name
-     * @return ModuleCategory
+     * @return Module
      */
-    public function setName(string $name): ModuleCategory
+    public function setName(string $name): Module
     {
         $this->name = $name;
         return $this;
@@ -62,9 +62,9 @@ class ModuleCategory
 
     /**
      * @param string[] $variables
-     * @return ModuleCategory
+     * @return Module
      */
-    public function setVariables(array $variables): ModuleCategory
+    public function setVariables(array $variables): Module
     {
         $this->variables = $variables;
         return $this;

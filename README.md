@@ -2,7 +2,7 @@
 
 This is a library for PHP to enable a form of dependency injection.
 
-It enumerates modules from the current project which are tagged with a `@module`
+It enumerates modules from the current project which are tagged with an
 annotation into a static module manifest. This can be hooked in as a composer
 script or run manually. For development purposes it is possible to generate the
 manifest dynamically with every request.
@@ -16,7 +16,7 @@ namespace Example;
 /**
  * Class ExampleModule
  * @package Example
- * @module Module
+ * @@Module
  */
 class ExampleModule
 {
